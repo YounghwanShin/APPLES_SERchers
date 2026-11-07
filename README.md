@@ -1,24 +1,78 @@
 # APPLES_SERchers
-Speech Emotion Recognition &amp; Dialogue Emotion Prediction Model
 화자 간 감정 정보를 이용한 대화 감정 예측 모델 
+Dialogue Emotion Prediction Using Inter-Speaker Emotional Information 
 
 ## 1. Overview & Research Background 
-대화 참여자 간의 감정 교환은 음성 운율(Prosody), 음향적 특징(Acoustic Features), 그리고 화자 간 감정 전이에 강력한 인과적 영향을 받는다. 본 연구에서는 텍스트 데이터를 배제하고 오직 음성신호만을 활용한다. 
+기존의 음성 감정 인식은 주로 개별 화자의 음성적 특징을 바탕으로 해당 발화에 나타난 감정을 추정하는 데 초점을 둔다. 
 
-본 연구는 "상대방 화자 B의 음성 감정 상태 및 발화 궤적이 화자 A의 다음 발화 감정 상태 전환에 어떤 인과적 영향을 미치는가?"라는 핵심 질문에서 출발한다. 
+그러나 실제 대화에서 감정은 화자 개인의 상태만으로 결정되지 않는다. 상대방의 감정 표현과 대화 맥락 역시 화자의 감정 변화와 밀접하게 연관될 수 있다.
 
-단순히 현재 발화의 감정을 분류하는 기존 SER(Speech Emotion Recognition)의 한계를 넘어, 이전 발화의 음성 히스토리와 상대방의 정서적 궤적을 통합하여 화자 A의 차기 감정 상태를 다차원 및 범주형으로 예측하는 End-to-End PipeLine을 제시한다.
+본 연구는 이러한 점에 주목하여, 화자 간 감정 정보가 다음 발화의 감정 예측에 어떠한 영향을 미치는지 분석하고자 한다. 
 
-본 연구는 대화 맥락 속에서 **화자 간 감정 전이** 및 상대방 감정이 나의 다음 감정에 미치는 인과적 영향을 분석합니다. 
+이를 위해 음성 기반 감정 추정 모델과 대화 맥락 기반 감정 예측 모델을 결합하여, 개별 발화의 감정 상태를 파악하는 것을 넘어 화자 간 감정 관계와 변화 양상을 분석한다. 
+
+## Reserch Quesstion 
+1. 상대방의 감정 정보는 화자의 다음 발화 감정 예측에 도움이 되는가?
+2. 자신의 이전 감정과 상대방의 감정 중 다음 감정을 예측하는 데 더 유의미한 정보는 무엇인가?
+3. 상대방의 감정 방향과 자신의 다음 감정 변화 사이에는 어떠한 관계가 나타나는가?
+4. 감정 변화는 즉각적으로 나타나는가, 아니면 여러 차례의 대화 이후 나타나는가?
+
+## 2. Dataset(연구 데이터) 
+# IEMOCAP
+* 음성 감정 추정 모델의 학습 및 평가에 활용
+* 발화 단위의 감정 정보와 연속적인 감정 차원 (VAD) 활용
+* 학습 및 검증을 통해 모델의 감정 추정 성능 평가
+
+# MELD (Friends Dataset) 
+* 실제 대화 상황에서 모델의 적용 가능성을 확인하기 위한 시연 데이터
+* FRIENDS 드라마의 다화자 대화 장면 활용
+* 발화별 음성, 화자 정보, 감정 예측값 연결
+* 시연 후보 장면 10개를 검토한 후 최종 3~4개 선정
+
+! 연구용 학습/평가 데이터와 시연용 데이터를 구분하여 사용 
+
+** 3. Model Architecture (모델 구성) 
+본 연구는 두 개의 모델을 연결하는 구조로 구성된다. 
+** Model 1. Emotion Estimation 
+목적: 음성으로부터 개별 발화의 감정 상태를 추정한다. 
+
+* Input: 화자별 발화 음성
+* Output: Valence, Arousal, Dominance (VAD) 점수
+* 역할: 발화별 감정 정보를 수치화하여 다음 모델에 전달
+
+** Model 2. Emotion Prediction 
+목적: 화자 간 이전 감정 정보를 바탕으로 특정 화자의 다음 발화 감정을 예측한다. 
+
+* Input: 예측 대상 화자의 이전 감정 정보 및 상대 화자의 감정 정보
+* Output: 예측 대상 화자의 다음 발화 감정
+* 역할: 상대방의 감정 정보가 다음 감정 예측에 기여하는 정도 분석
+
+** Integrated Pipeline 
+1. 음성 데이터를 입력받아 발화별 감정 점수 추출
+2. 발화 순서와 화자 정보를 기준으로 감정 데이터 정렬
+3. 화자 간 감정 정보를 결합하여 다음 발화 감정 예측
+4. 실제 감정값과 예측값 비교 및 분석
 
 
-## 2. Key Objectives & Hypothesis 
-1. Acoustic Emotional causality Analysis: 화자 A의 음성 기반 감정 변화가 자발적인지, 혹은 화자 B의 음성 발화에 의한 감정 전이 현상에 기인한 지 인과적 관계를 분석한다.
 
-* Dataset: IEMOCAP(Interactive Emotional Dyadic Motion Capture Database)
+** 4. Research Analysis
+4.1 화자 간 감정 관계 분석 
+* 자신이 이전 감정과 상대방의 감정이 다음 감정에 미치는 영향 비교
+* 상대방의 감정 방향과 자신의 다음 감정 방향 사이의 관계 분석
+* 감정 차워별 (Valence, Arousal, Dominance) 변화 양상 확인
 
-## 3. System Architecture & Methodology 
-본 프레임워크는 음성 감정 인식과 대화 흐름 기반 감정 예측의 두가지 핵심 축으로 구성이 된다. 
+4.2 감정 변화 시점 분석 
+* 상대방의 감정 변화 이후 예측 대상 화자의 감정이 변화하는 시점 분석
+* 즉각적인 반응과 지연된 반응 비교
+* 감정 변화가 단발성인지 지속적인지 확인
+
+4.3 모델 성능 평가 
+* 실제 감정값과 예측값 비교
+* 모델별 성능 평가 및 비교
+* 상대방 감정 정보를 추가했을 때의 예측 성능 변화 확인
+
+
+
 
 ## 4. Dataset & Preprocessing 
 * Dataset: IEMOCAP(Interactive Emotional Dyadic motion Capture Database) - Audio Streams
