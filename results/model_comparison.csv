@@ -1,4 +1,4 @@
-model, RMSE, CCC
-Model A, ,
-Model B, ,
-Model C, ,
+model,input_information,purpose
+Model A,Speaker A's previous emotion,Baseline model using only the target speaker's previous emotion
+Model B,Speaker B's emotion,Baseline model using only the interlocutor's emotion
+Model C,Speaker A's previous emotion + Speaker B's emotion,Model using both the target speaker's previous emotion and the interlocutor's emotion
