@@ -1,0 +1,23 @@
+# IEMOCAP 음성 → Valence/Arousal/Dominance 회귀 (src/train_ser.py)
+# 실수 값은 소수점을 포함해 적는다 (예: 12.0, 5.0e-5).
+
+data:
+  iemocap_root: /workspace/APPLES_SERchers/IEMOCAP_extracted/IEMOCAP_full_release  # Session1~5 폴더가 있는 원본 경로
+  max_train_seconds: 12.0  # 학습 시 이보다 긴 발화는 무작위 구간으로 자른다
+  valid_ratio: 0.2         # 테스트 세션을 제외한 발화 중 검증셋 비율
+
+model:
+  name: facebook/wav2vec2-large-robust  # Hugging Face 모델 ID 또는 로컬 경로
+  gradient_checkpointing: true
+
+train:
+  output_dir: runs/ser_iemocap  # 실행 위치 기준 경로
+  batch_size: 32       # CCC 손실을 계산하는 배치 크기
+  eval_batch_size: 8
+  learning_rate: 5.0e-5
+  warmup_ratio: 0.1
+  epochs: 20
+  patience: 5          # 검증 CCC 평균이 이 에폭 수만큼 개선되지 않으면 종료
+  bf16: false
+  num_workers: 4
+  seed: 42
